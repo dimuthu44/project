@@ -34,7 +34,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
     protected static final String TAG = "DIMUTHU::";
     CameraBridgeViewBase mOpenCvCameraView;
-    Mat image;
+    Mat square2;
     int counter = 0;
 
 	@Override
@@ -74,13 +74,23 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 			
 			Mat mRgba = inputFrame.rgba();
 			
-			ArrayList<List<Point>> squares = new ArrayList<List<Point>>();
-			DetectSquares.fintSquares(mRgba, squares);
-			if (squares.size() > 0) {
-				Log.i(TAG, "Square count is : " + squares.size());
-				drawSquares(mRgba, squares);
+//			ArrayList<List<Point>> squares = new ArrayList<List<Point>>();
+//			DetectSquares.findSquares(mRgba, squares);
+//			if (squares.size() > 0) {
+//				Log.i(TAG, "Square count is : " + squares.size());
+//				drawSquares(mRgba, squares);
+//			}
+			try {
+				List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+				MatOfPoint contour = DetectSquares.find(mRgba);
+				contours.add(contour);
+				
+				Imgproc.drawContours(mRgba, contours, -1, new Scalar(0,255,0), Core.FILLED);
+//				 Imgproc.drawContours(src, contours, maxId, new Scalar(255, 0, 0, .8), 8);
+				Log.i(TAG, "Point area : " + contour.size().area());
+			} catch (Exception e) {
+//				Log.e(TAG, e.getMessage());
 			}
-			
 			
 		//}
 		//else {
@@ -139,7 +149,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
     			{
     				Log.i(TAG, "OpenCV loaded successfully");
     				mOpenCvCameraView.enableView();
-    				image = Highgui.imread("/mnt/sdcard/square2.jpg");
+    				square2 = Highgui.imread("/mnt/sdcard/square2.jpg");
     			} break;
     			default:
     			{
