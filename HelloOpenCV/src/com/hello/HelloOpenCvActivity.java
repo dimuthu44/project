@@ -64,7 +64,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	}
 	
 	public void onCameraViewStarted(int width, int height) {
-		this.prepare(width, height);
+		this.prepare(640, 480);
 	}
 	
 	public void onCameraViewStopped() {
@@ -82,6 +82,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		detectSquares.find_squares(inputFrame.rgba(), squares);
 		if (squares.size() > 0) {
 			Log.i(TAG, "Square count is : " + squares.size());
+			drawSquares(inputFrame.rgba(), squares);
 		}
 		
 //		Mat blurred = new Mat(image.size(), CvType.CV_64FC4);
@@ -93,19 +94,25 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	// the function draws all the squares in the image
 	private void drawSquares(Mat image, ArrayList<List<Point>> squares)
 	{
+		List<MatOfPoint> polyline = null;
 	    for(int i = 0; i < squares.size(); i++ )
 	    {
 	        Point point = squares.get(i).get(0);
-	        int n = (int)squares.get(i).size();
+	                
 	        
-	        List<MatOfPoint> polyline = new ArrayList<MatOfPoint>();
+	        polyline = new ArrayList<MatOfPoint>();
 	        polyline.add(new MatOfPoint(point)); //TODO
 	        
-	        Core.polylines(image, polyline, true, new Scalar(100));
+	        
+	        
 	        //polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
 	    }
-
-	   
+	    
+	    if (polyline != null) {
+	    	Core.polylines(image, polyline, true, new Scalar(255, 0, 0));
+	    	Imgproc.drawContours(image, polyline, -1, new Scalar(0,255,0), Core.FILLED);
+	    }
+	    
 	    
 //	    Highgui.im
 //	    imshow(wndname, image);

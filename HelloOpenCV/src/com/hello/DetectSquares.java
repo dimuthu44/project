@@ -70,7 +70,6 @@ public class DetectSquares {
                  } else {
                      int i = (l + 1) * 255 / threshold_level;
                      gray = gray0.cols() >= i ? gray0 : gray; //TODO
-
                  }
 
                  // Find contours and store them in a list. 
@@ -114,10 +113,9 @@ public class DetectSquares {
                  }
              }
          }
-
      }
     
     private void drawContours(Mat image, List<MatOfPoint> contours) {
-    	 Imgproc.drawContours(image, contours, -1, new Scalar(255,0,0,255));
+    	 Imgproc.drawContours(image, contours, -1, new Scalar(0,255,0));
     }
 }
