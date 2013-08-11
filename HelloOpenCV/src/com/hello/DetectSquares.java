@@ -31,12 +31,16 @@ public class DetectSquares {
 
         return (dx1 * dx2 + dy1 * dy2) / Math.sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
     }
+    
+    public static void prepare() {
+    	
+    }
 
-    public void find_squares(Mat image, ArrayList<List<Point>> squares) {
+    public static void fintSquares(Mat image, ArrayList<List<Point>> squares) {
     	 Imgproc img = new Imgproc();
 
          // blur will enhance edge detection
-         org.opencv.core.Mat blurred = new org.opencv.core.Mat();
+         Mat blurred = new Mat();
          Imgproc.medianBlur(image, blurred, 9);
 
          Mat gray0 = new Mat(blurred.size(), CvType.CV_8U);

@@ -35,7 +35,6 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
     protected static final String TAG = "DIMUTHU::";
     CameraBridgeViewBase mOpenCvCameraView;
     Mat image;
-    DetectSquares detectSquares = new DetectSquares();
     int counter = 0;
 
 	@Override
@@ -64,7 +63,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	}
 	
 	public void onCameraViewStarted(int width, int height) {
-		this.prepare(width, height);
+		DetectSquares.prepare();
 	}
 	
 	public void onCameraViewStopped() {
@@ -73,30 +72,22 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		//if (counter++ % 10 == 0) {
 			
-			
-			//mOpenCvCameraView.disableView();
-	//		Log.i(TAG, "Re-drawing image");
 			Mat mRgba = inputFrame.rgba();
-	//		Mat mGray = new Mat();
-	//        Imgproc.cvtColor(mRgba, mGray, Imgproc.COLOR_BGRA2GRAY);
-	//        Mat xyz = image.clone();
-			//Utils.
 			
 			ArrayList<List<Point>> squares = new ArrayList<List<Point>>();
-			detectSquares.find_squares(mRgba, squares);
+			DetectSquares.fintSquares(mRgba, squares);
 			if (squares.size() > 0) {
 				Log.i(TAG, "Square count is : " + squares.size());
 				drawSquares(mRgba, squares);
 			}
 			
-			Mat blurred = new Mat(mRgba.size(), mRgba.type());
-			Imgproc.medianBlur(mRgba, blurred, 9);
-			return blurred;
+			
 		//}
 		//else {
 		//	return inputFrame.rgba();
 		//}
 	        
+			//test 1
 //		Mat mRgba = inputFrame.gray();
 //		Core.rectangle(mRgba, new Point(3, 4), new Point(7, 8), new Scalar(0,255,0));
 //        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -104,6 +95,11 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 //
 //        Imgproc.drawContours(mRgba, contours, -1, new Scalar(255,0,0));
 //        Log.i(TAG, "contour count " + contours.size());
+			
+			// test 2
+//			Mat blurred = new Mat(mRgba.size(), mRgba.type());
+//			Imgproc.medianBlur(mRgba, blurred, 9);
+//			return blurred;
         return mRgba;
 		
 	}
@@ -120,20 +116,12 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	        
 	        polyline = new ArrayList<MatOfPoint>();
 	        polyline.add(new MatOfPoint(point)); //TODO
-	        
-	        
-	        
-	        //polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
 	    }
 	    
 	    if (polyline != null) {
 	    	Core.polylines(image, polyline, true, new Scalar(255, 0, 0));
 	    	Imgproc.drawContours(image, polyline, -1, new Scalar(0,255,0), Core.FILLED);
 	    }
-	    
-	    
-//	    Highgui.im
-//	    imshow(wndname, image);
 	}
 	
 	@Override
@@ -166,13 +154,5 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	 {
 		 super.onResume();
 		 OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
-	 }
-	 
-	 /* This method is to make the processor know the size of the frames that
-	     * will be delivered via puzzleFrame.
-	     * If the frames will be different size - then the result is unpredictable
-	     */
-	 public synchronized void prepare(int width, int height) {
-		 
 	 }
 }
