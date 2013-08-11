@@ -35,8 +35,8 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
     protected static final String TAG = "DIMUTHU::";
     CameraBridgeViewBase mOpenCvCameraView;
     Mat image;
-    private Mat mRgba15;
     DetectSquares detectSquares = new DetectSquares();
+    int counter = 0;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,31 +64,48 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	}
 	
 	public void onCameraViewStarted(int width, int height) {
-		this.prepare(640, 480);
+		this.prepare(width, height);
 	}
 	
 	public void onCameraViewStopped() {
 	}
 	
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-		//mOpenCvCameraView.disableView();
-//		Log.i(TAG, "Re-drawing image");
-//		Mat mRgba = inputFrame.rgba();
-//		Mat mGray = new Mat();
-//        Imgproc.cvtColor(mRgba, mGray, Imgproc.COLOR_BGRA2GRAY);
-//        Mat xyz = image.clone();
-		//Utils.
-		ArrayList<List<Point>> squares = new ArrayList<List<Point>>();
-		detectSquares.find_squares(inputFrame.rgba(), squares);
-		if (squares.size() > 0) {
-			Log.i(TAG, "Square count is : " + squares.size());
-			drawSquares(inputFrame.rgba(), squares);
-		}
-		
-//		Mat blurred = new Mat(image.size(), CvType.CV_64FC4);
-//		Imgproc.medianBlur(image, blurred, 9);
+		//if (counter++ % 10 == 0) {
+			
+			
+			//mOpenCvCameraView.disableView();
+	//		Log.i(TAG, "Re-drawing image");
+			Mat mRgba = inputFrame.rgba();
+	//		Mat mGray = new Mat();
+	//        Imgproc.cvtColor(mRgba, mGray, Imgproc.COLOR_BGRA2GRAY);
+	//        Mat xyz = image.clone();
+			//Utils.
+			
+			ArrayList<List<Point>> squares = new ArrayList<List<Point>>();
+			detectSquares.find_squares(mRgba, squares);
+			if (squares.size() > 0) {
+				Log.i(TAG, "Square count is : " + squares.size());
+				drawSquares(mRgba, squares);
+			}
+			
+			Mat blurred = new Mat(mRgba.size(), mRgba.type());
+			Imgproc.medianBlur(mRgba, blurred, 9);
+			return blurred;
+		//}
+		//else {
+		//	return inputFrame.rgba();
+		//}
 	        
-		return inputFrame.rgba();
+//		Mat mRgba = inputFrame.gray();
+//		Core.rectangle(mRgba, new Point(3, 4), new Point(7, 8), new Scalar(0,255,0));
+//        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//        Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//
+//        Imgproc.drawContours(mRgba, contours, -1, new Scalar(255,0,0));
+//        Log.i(TAG, "contour count " + contours.size());
+        return mRgba;
+		
 	}
 	
 	// the function draws all the squares in the image
@@ -99,6 +116,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	    {
 	        Point point = squares.get(i).get(0);
 	                
+	        Log.i(TAG, "Points x : " + point.x + " y: " + point.y);
 	        
 	        polyline = new ArrayList<MatOfPoint>();
 	        polyline.add(new MatOfPoint(point)); //TODO
@@ -118,29 +136,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 //	    imshow(wndname, image);
 	}
 	
-	private Bitmap ReadImage1(String fBitmap) {
-//	    String root = Environment.getExternalStorageDirectory().toString();
-//	    File myDir = new File(root + "/preprocessed");
-	    File file = new File(fBitmap); //or any other format supported
-	   // UIHelper.displayText(this, R.id.textView1, file.toString());
-	    Bitmap bitmap = null; 
-
-	    try {
-	        BitmapFactory.Options options = new BitmapFactory.Options();
-	        options.inPreferredConfig = Bitmap.Config.ARGB_8888;        
-	        bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),options); //This gets the image `       
-	        return bitmap;
-
-	        } catch (Exception e) {
-	               e.printStackTrace();
-	               //UIHelper.displayText(this, R.id.textView1, "Doesn't exist");
-	        }
-
-	        return bitmap;
-	 }
-	
-
-    @Override
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.hello_open_cv, menu);
@@ -177,6 +173,6 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	     * If the frames will be different size - then the result is unpredictable
 	     */
 	 public synchronized void prepare(int width, int height) {
-		 mRgba15 = new Mat(height, width, CvType.CV_8UC4);
+		 
 	 }
 }

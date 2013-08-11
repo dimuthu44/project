@@ -69,7 +69,7 @@ public class DetectSquares {
                      Imgproc.dilate(gray, gray, new Mat(), point, 1);
                  } else {
                      int i = (l + 1) * 255 / threshold_level;
-                     gray = gray0.cols() >= i ? gray0 : gray; //TODO
+                     gray = gray0.rows() >= i ? gray0 : gray; //TODO
                  }
 
                  // Find contours and store them in a list. 
@@ -77,43 +77,47 @@ public class DetectSquares {
                  //drawContours(image, contours);
 
                  // Test contours
-                 MatOfPoint2f approx = new MatOfPoint2f();
-                 for (int i = 0; i < contours.size(); i++) {
-                     // approximate contour with accuracy proportional
-                     // to the contour perimeter
-                	 MatOfPoint mapOfPoint = contours.get(i);
-                	 MatOfPoint2f mapOfPoint2f = new MatOfPoint2f();
-                	              	 
-                	 mapOfPoint2f.fromArray(mapOfPoint.toArray());
-                	 
-                     double epilson = Imgproc.arcLength(mapOfPoint2f, true);
-                     epilson *= 0.02;
-                     Imgproc.approxPolyDP(mapOfPoint2f, approx, epilson, true);
-
-                     // Note: absolute value of an area is used because
-                     // area may be positive or negative - in accordance with the
-                     // contour orientation
-
-                     MatOfPoint approx_mapofpoint = new MatOfPoint(approx.toArray());
-
-                     if (approx.size().area() == 4 &&
-                             Math.abs(Imgproc.contourArea(approx)) > 1000 &&
-                             Imgproc.isContourConvex(approx_mapofpoint)) {
-                         double maxCosine = 0;
-
-                         for (int j = 2; j < 5; j++) {
-                             double cosine = Math.abs(angle(approx.toArray()[j % 4], approx.toArray()[j - 2], approx.toArray()[j - 1]));
-                             maxCosine = Math.max(maxCosine, cosine);
-                         }
-
-                         if (maxCosine < 0.3) {
-                             squares.add(approx.toList());
-                         }
-                     }
-                 }
+                 //testContours(squares, contours);
              }
          }
      }
+
+	private void testContours(ArrayList<List<Point>> squares,
+			List<MatOfPoint> contours) {
+		MatOfPoint2f approx = new MatOfPoint2f();
+		 for (int i = 0; i < contours.size(); i++) {
+		     // approximate contour with accuracy proportional to the contour perimeter
+			 MatOfPoint mapOfPoint = contours.get(i);
+			 MatOfPoint2f mapOfPoint2f = new MatOfPoint2f();
+			              	 
+			 mapOfPoint2f.fromArray(mapOfPoint.toArray());
+			 
+		     double epilson = Imgproc.arcLength(mapOfPoint2f, true);
+		     epilson *= 0.02;
+		     Imgproc.approxPolyDP(mapOfPoint2f, approx, epilson, true);
+
+		     // Note: absolute value of an area is used because
+		     // area may be positive or negative - in accordance with the
+		     // contour orientation
+
+		     MatOfPoint approx_mapofpoint = new MatOfPoint(approx.toArray());
+
+		     if (approx.size().area() == 4 &&
+		             Math.abs(Imgproc.contourArea(approx)) > 1000 &&
+		             Imgproc.isContourConvex(approx_mapofpoint)) {
+		         double maxCosine = 0;
+
+		         for (int j = 2; j < 5; j++) {
+		             double cosine = Math.abs(angle(approx.toArray()[j % 4], approx.toArray()[j - 2], approx.toArray()[j - 1]));
+		             maxCosine = Math.max(maxCosine, cosine);
+		         }
+
+		         if (maxCosine < 0.3) {
+		             squares.add(approx.toList());
+		         }
+		     }
+		 }
+	}
     
     private void drawContours(Mat image, List<MatOfPoint> contours) {
     	 Imgproc.drawContours(image, contours, -1, new Scalar(0,255,0));
