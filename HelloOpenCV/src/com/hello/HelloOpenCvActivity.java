@@ -15,17 +15,21 @@ import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 
-public class HelloOpenCvActivity extends Activity implements CvCameraViewListener2 {
+public class HelloOpenCvActivity extends Activity implements CvCameraViewListener2, OnTouchListener { 
 
 	protected static final String TAG = "DIMUTHU::";
-	CameraBridgeViewBase mOpenCvCameraView;
+	HelloViewer mOpenCvCameraView;
 	Mat square2;
 	int counter = 0;
 
@@ -35,7 +39,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.opencv_layout);
-		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
+		mOpenCvCameraView = (HelloViewer) findViewById(R.id.HelloOpenCvView);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
 	}
@@ -54,6 +58,9 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	}
 
 	public void onCameraViewStarted(int width, int height) {
+		Size resolution = mOpenCvCameraView.getResolution();
+		
+		mOpenCvCameraView.setResolution(resolution);
 	}
 
 	public void onCameraViewStopped() {
@@ -102,5 +109,11 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		super.onResume();
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this,
 				mLoaderCallback);
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

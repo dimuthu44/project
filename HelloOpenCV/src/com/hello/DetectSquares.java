@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetectSquares {
-	public static int contourIdx = -1;
 	
 	/**
 	 * http://stackoverflow.com/questions/18020455/java-opencv-tesseract-ocr-code-regocnition/18042054#18042054
@@ -37,6 +36,7 @@ public class DetectSquares {
         MatOfPoint2f approxCurve;
 
         double maxArea = 0;
+        int contourIdx = -1;
 
         for (int c = 0; c < 3; c++) {
             int ch[] = {c, 0};
@@ -58,9 +58,11 @@ public class DetectSquares {
                     MatOfPoint2f temp = new MatOfPoint2f(contour.toArray());
 
                     double area = Imgproc.contourArea(contour);
+                    //TODO: If area < PREDEFINED_AREA then quit?
+
                     approxCurve = new MatOfPoint2f();
                     Imgproc.approxPolyDP(temp, approxCurve, Imgproc.arcLength(temp, true) * 0.02, true);
-
+                    
                     if (approxCurve.total() == 4 && area >= maxArea) {
                         double maxCosine = 0;
 
