@@ -17,6 +17,7 @@ import org.opencv.imgproc.Imgproc;
 
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
@@ -68,11 +69,17 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
+		String path = Environment.getExternalStorageDirectory().getPath();
 
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		contours.add(DetectSquares.find(mRgba));
-		if (contours.get(0) != null) {
-			Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+		try {
+			contours.add(DetectSquares.find(mRgba));
+			if (contours.get(0) != null) {
+				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+			}
+		}
+		catch(Exception exc) {
+			Log.e(TAG, "Error occured" + exc.getMessage());
 		}
 
 		return mRgba;

@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: L:\\opencv\\project\\project\\OpenCV Library - 2.4.6\\src\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+ * Original file: /home/dimuthu/project/project/OpenCV Library - 2.4.6/src/org/opencv/engine/OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**
