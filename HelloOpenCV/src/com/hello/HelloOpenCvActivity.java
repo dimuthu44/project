@@ -93,18 +93,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		return mRgba;
 	}
 	
-	public void processOCR() {
-		try {
-			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
-			Bitmap bitmap = OCRProcessor.getBitmapImage(imagePath);
-//			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-			String text = OCRProcessor.getOCRText(bitmap);
-			Log.i(TAG, "TEXT \n" + text);
-		}
-		catch(Exception exc) {
-			Log.e(TAG, "Error occured" + exc.getMessage());
-		}
-	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,6 +138,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
         
         mOpenCvCameraView.takePicture(fileName);
         Toast.makeText(this, fileName + " saved", Toast.LENGTH_SHORT).show();
+        
         return false;
     }
 }

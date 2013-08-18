@@ -1,19 +1,26 @@
-package com.hello;
-
 import java.io.IOException;
-
-import com.googlecode.tesseract.android.TessBaseAPI;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.os.Environment;
+import android.os.AsyncTask;
+import android.util.Log;
 
-public class OCRProcessor {
-	
-	public Bitmap getBitmapImage(String path) throws IOException {
-		ExifInterface exif = new ExifInterface(path);
+
+public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+	protected static final String TAG = "DIMUTHU::";
+
+	@Override
+	protected Bitmap doInBackground(String... arg0) {
+		String path = arg0[0];
+
+		ExifInterface exif = null;
+		try {
+			exif = new ExifInterface(path);
+		} catch (IOException ioex) {
+			Log.e(TAG, ioex.toString());
+		}
 		int exifOrientation = exif.getAttributeInt(
 		        ExifInterface.TAG_ORIENTATION,
 		        ExifInterface.ORIENTATION_NORMAL);
@@ -50,20 +57,5 @@ public class OCRProcessor {
 		
 		return bbbb;
 	}
-	
-	public String getOCRText(Bitmap bitmap) {
-		TessBaseAPI baseApi = new TessBaseAPI();
-		//Environment.getExternalStorageDirectory().getPath();
-		//./Android/data/com.datumdroid.app/files/mounted/tessdata/eng.traineddata
-//		String DATA_PATH = Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.datumdroid.app/files/mounted/tessdata/eng.traineddata";
-		
-		String DATA_PATH = Environment.getExternalStorageDirectory().getPath() + "/project";
-		String lang = "eng";
-		baseApi.init(DATA_PATH, lang);
-		baseApi.setImage(bitmap);
-		String recognizedText = baseApi.getUTF8Text();
-		baseApi.end();
-		
-		return recognizedText;
-	}
 }
+	

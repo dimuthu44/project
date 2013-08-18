@@ -6,6 +6,7 @@ import org.opencv.android.JavaCameraView;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
@@ -55,9 +56,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 	@Override
     public void onPictureTaken(byte[] data, Camera camera) {
         Log.i(TAG, "Saving a bitmap to file");
-        // The camera preview was automatically stopped. Start it again.
-        mCamera.startPreview();
-        mCamera.setPreviewCallback(this);
+        
 
         // Write the image in a file (in jpeg format)
         try {
@@ -65,12 +64,36 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 
             fos.write(data);
             fos.close();
+            
 
         } catch (java.io.IOException e) {
             Log.e(TAG, "Exception in photoCallback", e);
         }
+        finally {
+        	
+        	// The camera preview was automatically stopped. Start it again.
+            mCamera.startPreview();
+            mCamera.setPreviewCallback(this);
+        }
+        
+        processOCR(mPictureFileName);
 
     }
+	
+	public void processOCR(String imagePath) {
+		try {
+			Log.i(TAG, "Started processing OCR");
+//			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
+			OCRProcessor ocr = new OCRProcessor();
+			Bitmap bitmap = ocr.getBitmapImage(imagePath);
+//			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+			String text = ocr.getOCRText(bitmap);
+			Log.i(TAG, "TEXT \n" + text);
+		}
+		catch(Exception exc) {
+			Log.e(TAG, "Error occured\n" + exc);
+		}
+	}
 
 
 }
