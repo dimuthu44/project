@@ -15,6 +15,8 @@ import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Environment;
@@ -69,14 +71,25 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
-		String path = Environment.getExternalStorageDirectory().getPath();
+		
 
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//		try {
+//			contours.add(DetectSquares.find(mRgba));
+//			if (contours.get(0) != null) {
+//				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+//			}
+//		}
+//		catch(Exception exc) {
+//			Log.e(TAG, "Error occured" + exc.getMessage());
+//		}
+		
 		try {
-			contours.add(DetectSquares.find(mRgba));
-			if (contours.get(0) != null) {
-				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
-			}
+			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
+			 Bitmap bitmap = OCRProcessor.getBitmapImage(imagePath);
+//			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+			 String text = OCRProcessor.getOCRText(bitmap);
+			 Log.i(TAG, "TEXT \n" + text);
 		}
 		catch(Exception exc) {
 			Log.e(TAG, "Error occured" + exc.getMessage());

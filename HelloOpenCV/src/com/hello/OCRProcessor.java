@@ -53,7 +53,10 @@ public class OCRProcessor {
 	public static String getOCRText(Bitmap bitmap) {
 		TessBaseAPI baseApi = new TessBaseAPI();
 		//Environment.getExternalStorageDirectory().getPath();
-		String DATA_PATH = "/mnt/sdcard/tesseract/tessdata/eng.traineddata";
+		//./Android/data/com.datumdroid.app/files/mounted/tessdata/eng.traineddata
+//		String DATA_PATH = Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.datumdroid.app/files/mounted/tessdata/eng.traineddata";
+		
+		String DATA_PATH = Environment.getExternalStorageDirectory().getPath() + "/project";
 		String lang = "eng";
 		baseApi.init(DATA_PATH, lang);
 		baseApi.setImage(bitmap);
