@@ -21,6 +21,7 @@ import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -38,10 +39,11 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "called onCreate");
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.opencv_layout);
+		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		mOpenCvCameraView = (HelloViewer) findViewById(R.id.HelloOpenCvView);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
@@ -71,32 +73,32 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
-		
 
-//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-//		try {
-//			contours.add(DetectSquares.find(mRgba));
-//			if (contours.get(0) != null) {
-//				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
-//			}
-//		}
-//		catch(Exception exc) {
-//			Log.e(TAG, "Error occured" + exc.getMessage());
-//		}
-		
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		try {
-			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
-			 Bitmap bitmap = OCRProcessor.getBitmapImage(imagePath);
-//			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-			 String text = OCRProcessor.getOCRText(bitmap);
-			 Log.i(TAG, "TEXT \n" + text);
+			contours.add(DetectSquares.find(mRgba));
+			if (contours.get(0) != null) {
+				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+			}
 		}
 		catch(Exception exc) {
 			Log.e(TAG, "Error occured" + exc.getMessage());
 		}
 
 		return mRgba;
-
+	}
+	
+	public void processOCR() {
+		try {
+			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
+			Bitmap bitmap = OCRProcessor.getBitmapImage(imagePath);
+//			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+			String text = OCRProcessor.getOCRText(bitmap);
+			Log.i(TAG, "TEXT \n" + text);
+		}
+		catch(Exception exc) {
+			Log.e(TAG, "Error occured" + exc.getMessage());
+		}
 	}
 
 	@Override
@@ -113,7 +115,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 			case LoaderCallbackInterface.SUCCESS: {
 				Log.i(TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
-				square2 = Highgui.imread("/mnt/sdcard/square2.jpg");
+				//square2 = Highgui.imread("/mnt/sdcard/square2.jpg");
 			}
 				break;
 			default: {
@@ -133,7 +135,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		// TODO Auto-generated method stub
-		return false;
+		onDestroy();
+		return true;
 	}
 }
