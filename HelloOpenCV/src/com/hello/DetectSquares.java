@@ -9,11 +9,15 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetectSquares {
 	
+	private static final double PREDEFINED_AREA = 50000;
+
 	/**
 	 * http://stackoverflow.com/questions/18020455/java-opencv-tesseract-ocr-code-regocnition/18042054#18042054
 	 * @param src
@@ -38,7 +42,8 @@ public class DetectSquares {
         double maxArea = 0;
         int contourIdx = -1;
 
-        for (int c = 0; c < 3; c++) {
+        // c=1 increase the performance, but doesn't catch A4 documents.
+        for (int c = 0; c < 3; c++) { 
             int ch[] = {c, 0};
             Core.mixChannels(blurredChannel, gray0Channel, new MatOfInt(ch));
 
@@ -54,13 +59,14 @@ public class DetectSquares {
                 Imgproc.findContours(gray, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
                 for (MatOfPoint contour : contours) {
-                	//Log.i("DIMUTHU::", "Contour size is : " + contours.size());
-                    MatOfPoint2f temp = new MatOfPoint2f(contour.toArray());
-
+                    
                     double area = Imgproc.contourArea(contour);
-                    //TODO: If area < PREDEFINED_AREA then quit?
+                    if (area < PREDEFINED_AREA)  {
+                    	continue;
+                    }
 
                     approxCurve = new MatOfPoint2f();
+                    MatOfPoint2f temp = new MatOfPoint2f(contour.toArray());
                     Imgproc.approxPolyDP(temp, approxCurve, Imgproc.arcLength(temp, true) * 0.02, true);
                     
                     if (approxCurve.total() == 4 && area >= maxArea) {
@@ -75,6 +81,7 @@ public class DetectSquares {
 
                         if (maxCosine < 0.3) {
                             maxArea = area;
+                            //Log.i("DIMUTHU::", "Contour area is " + maxArea);
                             contourIdx = contours.indexOf(contour);
                             //contours.set(maxId, getHull(contour));
                         }

@@ -1,6 +1,8 @@
 package com.hello;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -20,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Environment;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.util.Log;
@@ -29,6 +32,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class HelloOpenCvActivity extends Activity implements CvCameraViewListener2, OnTouchListener { 
 
@@ -64,7 +68,6 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	public void onCameraViewStarted(int width, int height) {
 		Size resolution = mOpenCvCameraView.getResolution();
-		
 		mOpenCvCameraView.setResolution(resolution);
 	}
 
@@ -74,16 +77,18 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
 
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		try {
-			contours.add(DetectSquares.find(mRgba));
-			if (contours.get(0) != null) {
-				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
-			}
-		}
-		catch(Exception exc) {
-			Log.e(TAG, "Error occured" + exc.getMessage());
-		}
+//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//		try {
+//			contours.add(DetectSquares.find(mRgba));
+//			if (contours.get(0) != null) {
+//				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+//				// beep sound
+//				// take picture
+//			}
+//		}
+//		catch(Exception exc) {
+//			Log.e(TAG, "Error occured" + exc.getMessage());
+//		}
 
 		return mRgba;
 	}
@@ -115,6 +120,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 			case LoaderCallbackInterface.SUCCESS: {
 				Log.i(TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
+				mOpenCvCameraView.setOnTouchListener(HelloOpenCvActivity.this);
 				//square2 = Highgui.imread("/mnt/sdcard/square2.jpg");
 			}
 				break;
@@ -129,13 +135,20 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	@Override
 	public void onResume() {
 		super.onResume();
-		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this,
-				mLoaderCallback);
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
 	}
 
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		onDestroy();
-		return true;
-	}
+	@SuppressLint("SimpleDateFormat")
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.i(TAG,"onTouch event");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateandTime = sdf.format(new Date());
+        String fileName = Environment.getExternalStorageDirectory().getPath() +
+                               "/project/sample_picture_" + currentDateandTime + ".jpg";
+        
+        mOpenCvCameraView.takePicture(fileName);
+        Toast.makeText(this, fileName + " saved", Toast.LENGTH_SHORT).show();
+        return false;
+    }
 }
