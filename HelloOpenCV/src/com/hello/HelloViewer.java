@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -20,6 +22,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 
 	public HelloViewer(Context context, AttributeSet attrs) {
 		super(context, attrs);
+//		mCamera.startPreview();
 //		Camera.Parameters parameters = mCamera.getParameters();
 //		parameters.set("orientation", "portrait");
 //		parameters.set("rotation", 90);
@@ -44,14 +47,25 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 	
 	public void takePicture(final String fileName) {
 		Log.i(TAG, "Taking picture");
+		
         this.mPictureFileName = fileName;
         // Postview and jpeg are sent in the same buffers if the queue is not empty when performing a capture.
         // Clear up buffers to avoid mCamera.takePicture to be stuck because of a memory issue
+        
         mCamera.setPreviewCallback(null);
+        //mCamera.autoFocus(autoFocusCallback);
 
         // PictureCallback is implemented by the current class
         mCamera.takePicture(null, null, this);
+//        mCamera.stopPreview();
     }
+	
+	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+		  @Override
+		  public void onAutoFocus(boolean success, Camera camera) {
+		    Log.i(TAG,"autofocus callback called."); 
+		  }
+		};
 	
 	@Override
     public void onPictureTaken(byte[] data, Camera camera) {
@@ -84,10 +98,14 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		try {
 			Log.i(TAG, "Started processing OCR");
 //			String imagePath = Environment.getExternalStorageDirectory().getPath() + "/project/111.jpg";
+			BitmapWorkerTask task = new BitmapWorkerTask();
+			AsyncTask<String, Void, Bitmap> aTask = task.execute(imagePath);
+			
+
 			OCRProcessor ocr = new OCRProcessor();
-			Bitmap bitmap = ocr.getBitmapImage(imagePath);
+//			Bitmap bitmap = ocr.getBitmapImage(imagePath);
 //			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-			String text = ocr.getOCRText(bitmap);
+			String text = ocr.getOCRText(aTask.get());
 			Log.i(TAG, "TEXT \n" + text);
 		}
 		catch(Exception exc) {
