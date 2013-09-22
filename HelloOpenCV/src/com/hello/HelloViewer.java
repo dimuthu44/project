@@ -1,6 +1,7 @@
 package com.hello;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.opencv.android.JavaCameraView;
 
@@ -23,12 +24,14 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 	public HelloViewer(Context context, AttributeSet attrs) {
 		super(context, attrs);
 //		mCamera.startPreview();
-//		Camera.Parameters parameters = mCamera.getParameters();
+		
 //		parameters.set("orientation", "portrait");
 //		parameters.set("rotation", 90);
 //		mCamera.setParameters(parameters);
 		// TODO Auto-generated constructor stub
-		//if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { mCamera.setDisplayOrientation(90); } 
+		//if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { mCamera.setDisplayOrientation(90); }
+		
+//		AutoFocusManager afManager = new AutoFocusManager(context, mCamera);
 	}
 
 	
@@ -45,6 +48,12 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		
 	}
 	
+	public void setAutoFocus() {
+		Log.i(TAG, "Seting autofocus mode");
+		Camera.Parameters parameters = mCamera.getParameters();
+		parameters.setFocusMode("continuous-picture");
+	}
+	
 	public void takePicture(final String fileName) {
 		Log.i(TAG, "Taking picture");
 		
@@ -53,7 +62,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
         // Clear up buffers to avoid mCamera.takePicture to be stuck because of a memory issue
         
         mCamera.setPreviewCallback(null);
-        //mCamera.autoFocus(autoFocusCallback);
+//        mCamera.autoFocus(autoFocusCallback);
 
         // PictureCallback is implemented by the current class
         mCamera.takePicture(null, null, this);
@@ -80,7 +89,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
             fos.close();
             
 
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Exception in photoCallback", e);
         }
         finally {
@@ -106,6 +115,8 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 //			Bitmap bitmap = ocr.getBitmapImage(imagePath);
 //			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 			String text = ocr.getOCRText(aTask.get());
+			
+			// Write text to file
 			Log.i(TAG, "TEXT \n" + text);
 		}
 		catch(Exception exc) {

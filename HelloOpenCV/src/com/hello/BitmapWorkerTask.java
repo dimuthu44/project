@@ -17,43 +17,44 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 	protected Bitmap doInBackground(String... arg0) {
 		String path = arg0[0];
 
-//		ExifInterface exif = null;
-//		try {
-//			exif = new ExifInterface(path);
-//		} catch (IOException ioex) {
-//			Log.e(TAG, ioex.toString());
-//		}
-//		int exifOrientation = exif.getAttributeInt(
-//		        ExifInterface.TAG_ORIENTATION,
-//		        ExifInterface.ORIENTATION_NORMAL);
-//
-//		int rotate = 0;
-//
-//		switch (exifOrientation) {
-//		case ExifInterface.ORIENTATION_ROTATE_90:
-//		    rotate = 90;
-//		    break;
-//		case ExifInterface.ORIENTATION_ROTATE_180:
-//		    rotate = 180;
-//		    break;
-//		case ExifInterface.ORIENTATION_ROTATE_270:
-//		    rotate = 270;
-//		    break;
-//		}
+		ExifInterface exif = null;
+		try {
+			exif = new ExifInterface(path);
+		} catch (IOException ioex) {
+			Log.e(TAG, ioex.toString());
+		}
+		int exifOrientation = exif.getAttributeInt(
+		        ExifInterface.TAG_ORIENTATION,
+		        ExifInterface.ORIENTATION_NORMAL);
+
+		int rotate = 0;
+
+		switch (exifOrientation) {
+		case ExifInterface.ORIENTATION_ROTATE_90:
+		    rotate = 90;
+		    break;
+		case ExifInterface.ORIENTATION_ROTATE_180:
+		    rotate = 180;
+		    break;
+		case ExifInterface.ORIENTATION_ROTATE_270:
+		    rotate = 270;
+		    break;
+		}
 		
 		Bitmap bitmap = BitmapFactory.decodeFile(path);
 
-//		if (rotate != 0) {
-//		    int w = bitmap.getWidth();
-//		    int h = bitmap.getHeight();
-//
-//		    // Setting pre rotate
-//		    Matrix mtx = new Matrix();
-//		    mtx.preRotate(rotate);
+		if (rotate != 0) {
+		    int w = bitmap.getWidth();
+		    int h = bitmap.getHeight();
+
+		    // Setting pre rotate
+		    Matrix mtx = new Matrix();
+		    mtx.preRotate(rotate);
 
 		    // Rotating Bitmap & convert to ARGB_8888, required by tess
-//		    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-//		}
+		    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
+		}
+		
 		Bitmap bbbb = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 		bitmap = null;
 		

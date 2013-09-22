@@ -19,7 +19,11 @@ import org.opencv.imgproc.Imgproc;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.annotation.SuppressLint;
@@ -47,7 +51,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.opencv_layout);
 		
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		mOpenCvCameraView = (HelloViewer) findViewById(R.id.HelloOpenCvView);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
@@ -69,6 +73,7 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	public void onCameraViewStarted(int width, int height) {
 		Size resolution = mOpenCvCameraView.getResolution();
 		mOpenCvCameraView.setResolution(resolution);
+		mOpenCvCameraView.setAutoFocus();
 	}
 
 	public void onCameraViewStopped() {
@@ -77,24 +82,35 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
 
-//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-//		try {
-//			contours.add(DetectSquares.find(mRgba));
-//			if (contours.get(0) != null) {
-//				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
-//				// beep sound
-//				// take picture
-//			}
-//		}
-//		catch(Exception exc) {
-//			Log.e(TAG, "Error occured" + exc.getMessage());
-//		}
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+		try {
+			contours.add(DetectSquares.find(mRgba));
+			if (contours.get(0) != null) {
+				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+				
+				// Open in different audio thread, 
+				try {
+					// beep sound
+			        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+			        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+			        r.play();
+			    } catch (Exception e) {
+			    	
+			    }
+				
+				// take picture
+			}
+			else {
+				// kill the audio thread
+			}
+		}
+		catch(Exception exc) {
+			Log.e(TAG, "Error occured" + exc.getMessage());
+		}
 
 		return mRgba;
 	}
 	
-	
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -110,7 +126,6 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 				Log.i(TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
 				mOpenCvCameraView.setOnTouchListener(HelloOpenCvActivity.this);
-				//square2 = Highgui.imread("/mnt/sdcard/square2.jpg");
 			}
 				break;
 			default: {
