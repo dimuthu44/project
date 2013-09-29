@@ -38,8 +38,8 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 	 public void setResolution(Size resolution) {
 	        disconnectCamera();
 	        
-	        mMaxHeight = 480; //resolution.height;
-	        mMaxWidth = 640; //resolution.width;
+	        mMaxHeight = 640; //resolution.height;
+	        mMaxWidth = 480; //resolution.width;
 	        connectCamera(getWidth(), getHeight());
 	    }
 
@@ -120,7 +120,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 			Log.i(TAG, "TEXT \n" + text);
 		}
 		catch(Exception exc) {
-			Log.e(TAG, "Error occured\n" + exc);
+			Log.e(TAG, "Error occured in processing OCR\n" + exc);
 		}
 	}
 

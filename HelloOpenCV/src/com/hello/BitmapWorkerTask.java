@@ -27,6 +27,8 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		        ExifInterface.TAG_ORIENTATION,
 		        ExifInterface.ORIENTATION_NORMAL);
 
+		Log.i(TAG, "Image EXIF orientation is : " + exifOrientation);
+		
 		int rotate = 0;
 
 		switch (exifOrientation) {
@@ -55,6 +57,8 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
 		}
 		
+		// TODO: Here the size is full size. Resize this.
+		bitmap = Bitmap.createScaledBitmap(bitmap, 1032, 774, true); //4128*3096 /4
 		Bitmap bbbb = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 		bitmap = null;
 		

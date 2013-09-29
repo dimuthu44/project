@@ -82,31 +82,31 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
 
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		try {
-			contours.add(DetectSquares.find(mRgba));
-			if (contours.get(0) != null) {
-				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
-				
-				// Open in different audio thread, 
-				try {
-					// beep sound
-			        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-			        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-			        r.play();
-			    } catch (Exception e) {
-			    	
-			    }
-				
-				// take picture
-			}
-			else {
-				// kill the audio thread
-			}
-		}
-		catch(Exception exc) {
-			Log.e(TAG, "Error occured" + exc.getMessage());
-		}
+//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//		try {
+//			contours.add(DetectSquares.find(mRgba));
+//			if (contours.get(0) != null) {
+//				Imgproc.drawContours(mRgba, contours, -1/*TODO*/, new Scalar(0, 255, 0), 4);
+//				
+//				// Open in different audio thread, 
+//				try {
+//					// beep sound
+//			        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+//			        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+//			        r.play();
+//			    } catch (Exception e) {
+//			    	
+//			    }
+//				
+//				// take picture
+//			}
+//			else {
+//				// kill the audio thread
+//			}
+//		}
+//		catch(Exception exc) {
+//			Log.e(TAG, "Error occured" + exc.getMessage());
+//		}
 
 		return mRgba;
 	}
