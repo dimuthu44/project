@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.opencv.android.JavaCameraView;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -19,7 +18,7 @@ import android.util.Log;
 
 public class HelloViewer extends JavaCameraView implements PictureCallback, ShutterCallback {
 
-	protected static final String TAG = "DIMUTHU::";
+//	protected static final String TAG = "DIMUTHU::";
 	private String mPictureFileName;
 
 	public HelloViewer(Context context, AttributeSet attrs) {
@@ -38,14 +37,14 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	}
 
 	public void setAutoFocus() {
-		Log.i(TAG, "Seting autofocus mode");
+		Log.i(Util.TAG, "Seting autofocus mode");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
 		mCamera.setParameters(parameters);
 	}
 
 	public void takePicture(final String fileName) {
-		Log.i(TAG, "Taking picture");
+		Log.i(Util.TAG, "Taking picture");
 
 		this.mPictureFileName = fileName;
 		// Postview and jpeg are sent in the same buffers if the queue is not
@@ -53,7 +52,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		// Clear up buffers to avoid mCamera.takePicture to be stuck because of
 		// a memory issue
 
-		mCamera.setPreviewCallback(null);
+//		mCamera.setPreviewCallback(null);
 		// mCamera.autoFocus(autoFocusCallback);
 
 		// PictureCallback is implemented by the current class
@@ -65,13 +64,13 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
 		@Override
 		public void onAutoFocus(boolean success, Camera camera) {
-			Log.i(TAG, "autofocus callback called.");
+			Log.i(Util.TAG, "autofocus callback called.");
 		}
 	};
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
-		Log.i(TAG, "Saving a bitmap to file");
+		Log.i(Util.TAG, "Saving a bitmap to file");
 
 		// Write the image in a file (in jpeg format)
 		try {
@@ -80,7 +79,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 			fos.close();
 
 		} catch (IOException e) {
-			Log.e(TAG, "Exception in photoCallback", e);
+			Log.e(Util.TAG, "Exception in photoCallback", e);
 		} finally {
 			// The camera preview was automatically stopped. Start it again.
 			// TODO: Stop this recall and let the program terminate.
@@ -93,26 +92,22 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 
 	public void processOCR(String imagePath) {
 		try {
-			Log.i(TAG, "Started processing OCR");
+			Log.i(Util.TAG, "Started processing OCR");
 			
 			BitmapWorkerTask task = new BitmapWorkerTask();
 			AsyncTask<String, Void, Bitmap> aTask = task.execute(imagePath);
 
 			OCRProcessor ocr = new OCRProcessor();
-			// Bitmap bitmap = ocr.getBitmapImage(imagePath);
-			// Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 			String text = ocr.getOCRText(aTask.get());
 
 			// Write text to file
-			Log.i(TAG, "TEXT \n" + text);
+			Log.i(Util.TAG, "TEXT \n" + text);
 		} catch (Exception exc) {
-			Log.e(TAG, "Error occured in processing OCR\n" + exc);
+			Log.e(Util.TAG, "Error occured in processing OCR\n" + exc);
 		}
 	}
 
 	@Override
 	public void onShutter() {
-		//TODO: Audio image capture notification.
-		
 	}
 }
