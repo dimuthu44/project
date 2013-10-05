@@ -11,12 +11,13 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 
-public class HelloViewer extends JavaCameraView implements PictureCallback {
+public class HelloViewer extends JavaCameraView implements PictureCallback, ShutterCallback {
 
 	protected static final String TAG = "DIMUTHU::";
 	private String mPictureFileName;
@@ -56,7 +57,8 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		// mCamera.autoFocus(autoFocusCallback);
 
 		// PictureCallback is implemented by the current class
-		mCamera.takePicture(null, null, this);
+		mCamera.takePicture(this, null, null, this);
+		//TODO: We need to stop processing afterwards.
 //		mCamera.stopPreview();
 	}
 
@@ -80,8 +82,8 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		} catch (IOException e) {
 			Log.e(TAG, "Exception in photoCallback", e);
 		} finally {
-
 			// The camera preview was automatically stopped. Start it again.
+			// TODO: Stop this recall and let the program terminate.
 			mCamera.startPreview();
 			mCamera.setPreviewCallback(this);
 		}
@@ -106,5 +108,11 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		} catch (Exception exc) {
 			Log.e(TAG, "Error occured in processing OCR\n" + exc);
 		}
+	}
+
+	@Override
+	public void onShutter() {
+		//TODO: Audio image capture notification.
+		
 	}
 }

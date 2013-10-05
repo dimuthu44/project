@@ -43,10 +43,18 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		}
 		
 		Bitmap bitmap = BitmapFactory.decodeFile(path);
+		
+		
+		bitmap = rotateBitMap(bitmap, 90);
+		//TODO: move this to if block.
+		int w = bitmap.getWidth();
+	    int h = bitmap.getHeight();
+	    
+	    Log.i(TAG, "Image width is : " + w + "Image height is : " + h);
 
-		if (rotate != 0) {
-		    int w = bitmap.getWidth();
-		    int h = bitmap.getHeight();
+	/*	if (rotate != 0) {
+//		    w = bitmap.getWidth();
+//		    h = bitmap.getHeight();
 
 		    // Setting pre rotate
 		    Matrix mtx = new Matrix();
@@ -54,7 +62,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 
 		    // Rotating Bitmap & convert to ARGB_8888, required by tess
 		    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-		}
+		}*/
 		
 		// TODO: Here the size is full size. Resize this.
 		bitmap = Bitmap.createScaledBitmap(bitmap, 1032, 774, true); //4128*3096 /4
@@ -62,6 +70,14 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		bitmap = null;
 		
 		return bbbb;
+	}
+
+	private Bitmap rotateBitMap(Bitmap bitmap, float angle) {
+		Matrix matrix = new Matrix();
+		matrix.postRotate(angle);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap .getWidth(), bitmap .getHeight(), matrix, true);
+		
+		return rotatedBitmap;
 	}
 }
 	
