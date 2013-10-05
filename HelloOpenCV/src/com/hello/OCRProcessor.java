@@ -25,7 +25,6 @@ public class OCRProcessor {
 	}
 	
 	public String getOCRText(Bitmap bitmap) {
-		
 		baseApi.setImage(bitmap);
 		String recognizedText = baseApi.getUTF8Text();
 		baseApi.end();

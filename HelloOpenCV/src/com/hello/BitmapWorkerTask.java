@@ -9,7 +9,6 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 	protected static final String TAG = "DIMUTHU::";
 

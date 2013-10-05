@@ -42,8 +42,6 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 
 	protected static final String TAG = "DIMUTHU::";
 	HelloViewer mOpenCvCameraView;
-	Mat square2;
-	int counter = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,22 +61,26 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		if (mOpenCvCameraView != null)
 			mOpenCvCameraView.disableView();
 	}
-
+	
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		if (mOpenCvCameraView != null)
 			mOpenCvCameraView.disableView();
 	}
 
+	@Override
 	public void onCameraViewStarted(int width, int height) {
 		Size resolution = mOpenCvCameraView.getResolution();
 		mOpenCvCameraView.setResolution(resolution);
 		mOpenCvCameraView.setAutoFocus();
 	}
 
+	@Override
 	public void onCameraViewStopped() {
 	}
 
+	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
 
@@ -136,6 +138,16 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		}
 	};
 
+//	protected void startCameraActivity() {
+//		File file = new File(_path);
+//		Uri outputFileUri = Uri.fromFile(file);
+//
+//		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+//
+//		startActivityForResult(intent, 0);
+//	}
+//	
 	@Override
 	public void onResume() {
 		super.onResume();
