@@ -40,6 +40,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 		Log.i(TAG, "Seting autofocus mode");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
+		mCamera.setParameters(parameters);
 	}
 
 	public void takePicture(final String fileName) {
@@ -56,7 +57,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 
 		// PictureCallback is implemented by the current class
 		mCamera.takePicture(null, null, this);
-		// mCamera.stopPreview();
+//		mCamera.stopPreview();
 	}
 
 	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
@@ -91,9 +92,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback {
 	public void processOCR(String imagePath) {
 		try {
 			Log.i(TAG, "Started processing OCR");
-			// String imagePath =
-			// Environment.getExternalStorageDirectory().getPath() +
-			// "/project/111.jpg";
+			
 			BitmapWorkerTask task = new BitmapWorkerTask();
 			AsyncTask<String, Void, Bitmap> aTask = task.execute(imagePath);
 
