@@ -33,6 +33,10 @@ import android.view.WindowManager;
 public class HelloOpenCvActivity extends Activity implements CvCameraViewListener2 { 
 
 	private HelloViewer mOpenCvCameraView;
+	private boolean killed = false;
+	Uri notification;
+	Ringtone ringTone;
+	Timer timer = new Timer();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,9 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 		mOpenCvCameraView = (HelloViewer) findViewById(R.id.HelloOpenCvView);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
+		
+		notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+	    ringTone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 	}
 
 	@Override
@@ -81,22 +88,25 @@ public class HelloOpenCvActivity extends Activity implements CvCameraViewListene
 			if (contours.get(0) != null) {
 				Imgproc.drawContours(mRgba, contours, -1, new Scalar(0, 255, 0), 4);
 				
-				//TODO: Add a beep sound
-				Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-			    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-			    r.play();
-			    				
-				// take picture
-			    Timer timer = new Timer();
-			    timer.schedule(new TimerTask() {
-			    	  @Override
-			    	  public void run() {
-			    		  captureImage();
-			    	  }
-			    }, 5*1000);
+				if (!killed) {
+					killed = true;
+					//TODO: Add a beep sound
+				    ringTone.play();
+				    				
+				    timer = new Timer();
+				    timer.schedule(new TimerTask() {
+				    	  @Override
+				    	  public void run() {
+				    		  ringTone.stop();
+				    		  captureImage();
+				    	  }
+				    }, 5*1000);
+				}
 			}
 			else {
-				// kill the audio thread
+				killed = false;
+				ringTone.stop();
+				timer.cancel();
 			}
 		}
 		catch(Exception exc) {
