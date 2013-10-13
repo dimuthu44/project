@@ -2,6 +2,7 @@ package com.hello;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import org.opencv.android.JavaCameraView;
 
@@ -15,6 +16,7 @@ import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.Toast;
 
 public class HelloViewer extends JavaCameraView implements PictureCallback, ShutterCallback {
 
@@ -74,20 +76,19 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 
 		// Write the image in a file (in jpeg format)
 		try {
-			FileOutputStream fos = new FileOutputStream(mPictureFileName);
+			FileOutputStream fos = new FileOutputStream(mPictureFileName + ".jpg");
 			fos.write(data);
 			fos.close();
 
 		} catch (IOException e) {
 			Log.e(Util.TAG, "Exception in photoCallback", e);
 		} finally {
+			processOCR(mPictureFileName);
 			// The camera preview was automatically stopped. Start it again.
 			// TODO: Stop this recall and let the program terminate.
 			mCamera.startPreview();
 			mCamera.setPreviewCallback(this);
 		}
-
-		processOCR(mPictureFileName);
 	}
 
 	public void processOCR(String imagePath) {
@@ -95,18 +96,31 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 			Log.i(Util.TAG, "Started processing OCR");
 			
 			BitmapWorkerTask task = new BitmapWorkerTask();
-			AsyncTask<String, Void, Bitmap> aTask = task.execute(imagePath);
+			AsyncTask<String, Void, Bitmap> aTask = task.execute(mPictureFileName + ".jpg");
 
 			OCRProcessor ocr = new OCRProcessor();
 			String text = ocr.getOCRText(aTask.get());
-
+			
 			// Write text to file
-			Log.i(Util.TAG, "TEXT \n" + text);
-		} catch (Exception exc) {
-			Log.e(Util.TAG, "Error occured in processing OCR\n" + exc);
+//			Log.i(Util.TAG, "TEXT \n" + text);
+			Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+			writeToFile(text, mPictureFileName + ".txt");
+		} 
+		catch (Exception exc) {
+			Log.e(Util.TAG, "Error occured in processing OCR", exc);
 		}
 	}
 
+	private void writeToFile(String data, String fileName) {
+	    try {
+	        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getContext().openFileOutput("111.txt", Context.MODE_PRIVATE));
+	        outputStreamWriter.write(data);
+	        outputStreamWriter.close();
+	    }
+	    catch (IOException e) {
+	        Log.e("Exception", "File write failed: " + e.toString());
+	    } 
+	}
 	@Override
 	public void onShutter() {
 	}

@@ -1,5 +1,8 @@
 package com.hello;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -8,11 +11,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DetectSquares {
 	

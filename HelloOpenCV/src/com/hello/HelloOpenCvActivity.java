@@ -107,7 +107,6 @@ public class HelloOpenCvActivity extends Activity implements
 
 				if (!killed) {
 					killed = true;
-					// TODO: Add a beep sound
 					ringTone.play();
 
 					timer = new Timer();
