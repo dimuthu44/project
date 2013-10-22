@@ -13,6 +13,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		
 		Bitmap bitmap = BitmapFactory.decodeFile(path);
 		bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, true); //original : 4128*3096
+		//The original image should be rotated 90 degrees.
 		bitmap = rotateBitMap(bitmap, 90);
 		bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 		

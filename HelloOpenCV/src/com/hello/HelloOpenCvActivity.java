@@ -35,13 +35,13 @@ import android.view.WindowManager;
 public class HelloOpenCvActivity extends Activity implements
 		CvCameraViewListener2, TextToSpeech.OnInitListener {
 
-	private TextToSpeech mTts;
+	public static TextToSpeech mTts;
 	private static final int MY_DATA_CHECK_CODE = 1234;
 	private HelloViewer mOpenCvCameraView;
 	private boolean killed = false;
-	Uri notification;
-	Ringtone ringTone;
-	Timer timer = new Timer();
+	private Uri notification;
+	private Ringtone ringTone;
+	private Timer timer = new Timer();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,8 @@ public class HelloOpenCvActivity extends Activity implements
 	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Mat mRgba = inputFrame.rgba();
-
+		// TODO: Shout the instructions time to time.
+		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		try {
 			contours.add(DetectSquares.find(mRgba));
@@ -116,7 +117,7 @@ public class HelloOpenCvActivity extends Activity implements
 							ringTone.stop();
 							captureImage();
 						}
-					}, 5 * 1000);
+					}, 2 * 1000);
 				}
 			} else {
 				killed = false;
@@ -182,8 +183,6 @@ public class HelloOpenCvActivity extends Activity implements
 					.getPath() + "/project/" + currentDateandTime + ".jpg";
 
 			mOpenCvCameraView.takePicture(fileName);
-			// Toast.makeText(this, fileName + " saved",
-			// Toast.LENGTH_SHORT).show();
 		} catch (Exception exc) {
 			Log.e(Util.TAG, "Error in capture image", exc);
 		}
@@ -206,9 +205,6 @@ public class HelloOpenCvActivity extends Activity implements
 
 	@Override
 	public void onInit(int arg0) {
-		mTts.speak("Hello folks, welcome to my little demo on Text To Speech.",
-				TextToSpeech.QUEUE_FLUSH, // Drop all pending entries in the
-											// playback queue.
-				null);
+		mTts.speak("Place your mobile on top of the document, and move it up slowly.", TextToSpeech.QUEUE_FLUSH, null);// Drop all pending entries in the playback queue.
 	}
 }

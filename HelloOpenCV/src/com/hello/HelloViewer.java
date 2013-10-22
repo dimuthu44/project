@@ -14,6 +14,7 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
 import android.os.AsyncTask;
+import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Toast;
@@ -39,7 +40,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	}
 
 	public void setAutoFocus() {
-		Log.i(Util.TAG, "Seting autofocus mode");
+		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
 		mCamera.setParameters(parameters);
@@ -62,13 +63,13 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		//TODO: We need to stop processing afterwards.
 //		mCamera.stopPreview();
 	}
-
-	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
-		@Override
-		public void onAutoFocus(boolean success, Camera camera) {
-			Log.i(Util.TAG, "autofocus callback called.");
-		}
-	};
+//
+//	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+//		@Override
+//		public void onAutoFocus(boolean success, Camera camera) {
+//			Log.i(Util.TAG, "autofocus callback called.");
+//		}
+//	};
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
@@ -102,9 +103,10 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 			String text = ocr.getOCRText(aTask.get());
 			
 			// Write text to file
-//			Log.i(Util.TAG, "TEXT \n" + text);
-			Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
-			writeToFile(text, mPictureFileName + ".txt");
+			HelloOpenCvActivity.mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
+			Log.i(Util.TAG, "TEXT \n" + text);
+//			Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+//			writeToFile(text, mPictureFileName + ".txt");
 		} 
 		catch (Exception exc) {
 			Log.e(Util.TAG, "Error occured in processing OCR", exc);
@@ -118,7 +120,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	        outputStreamWriter.close();
 	    }
 	    catch (IOException e) {
-	        Log.e("Exception", "File write failed: " + e.toString());
+	        Log.e(Util.TAG, "File write failed: " + e.toString());
 	    } 
 	}
 	@Override
