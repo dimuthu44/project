@@ -20,6 +20,7 @@ import org.opencv.imgproc.Imgproc;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -68,15 +69,15 @@ public class HelloOpenCvActivity extends Activity implements
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
+//		shutdownCamera();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
+		shutdownCamera();
+		
+		
 		if (mTts != null) {
 			mTts.stop();
 			mTts.shutdown();
@@ -142,29 +143,16 @@ public class HelloOpenCvActivity extends Activity implements
 		@Override
 		public void onManagerConnected(int status) {
 			switch (status) {
-			case LoaderCallbackInterface.SUCCESS: {
+			case LoaderCallbackInterface.SUCCESS: 
 				Log.i(Util.TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
-			}
 				break;
-			default: {
+			default: 
 				super.onManagerConnected(status);
-			}
 				break;
 			}
 		}
 	};
-
-	// protected void startCameraActivity() {
-	// File file = new File(_path);
-	// Uri outputFileUri = Uri.fromFile(file);
-	//
-	// final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	// intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-	//
-	// startActivityForResult(intent, 0);
-	// }
-	//
 
 	@Override
 	public void onResume() {
@@ -176,7 +164,6 @@ public class HelloOpenCvActivity extends Activity implements
 	@SuppressLint("SimpleDateFormat")
 	private void captureImage() {
 		try {
-			Log.i(Util.TAG, "onTouch event");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 			String currentDateandTime = sdf.format(new Date());
 			String fileName = Environment.getExternalStorageDirectory()
@@ -206,5 +193,16 @@ public class HelloOpenCvActivity extends Activity implements
 	@Override
 	public void onInit(int arg0) {
 		mTts.speak("Place your mobile on top of the document, and move it up slowly.", TextToSpeech.QUEUE_FLUSH, null);// Drop all pending entries in the playback queue.
+	}
+	
+	private void shutdownCamera() {
+		if (mOpenCvCameraView != null) {
+			if (mOpenCvCameraView.getCamera() != null) {
+		    	mOpenCvCameraView.getCamera().stopPreview();
+		    	mOpenCvCameraView.getCamera().release();
+		        mOpenCvCameraView.setCamera(null);
+		    }
+		    mOpenCvCameraView.disableView();
+		}
 	}
 }

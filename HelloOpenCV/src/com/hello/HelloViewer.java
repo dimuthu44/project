@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 public class HelloViewer extends JavaCameraView implements PictureCallback, ShutterCallback {
 
-//	protected static final String TAG = "DIMUTHU::";
 	private String mPictureFileName;
 
 	public HelloViewer(Context context, AttributeSet attrs) {
@@ -123,7 +122,16 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	        Log.e(Util.TAG, "File write failed: " + e.toString());
 	    } 
 	}
+	
 	@Override
 	public void onShutter() {
+	}
+	
+	public Camera getCamera() {
+		return mCamera;
+	}
+	
+	public void setCamera(Camera camera) {
+		this.mCamera = camera;
 	}
 }
