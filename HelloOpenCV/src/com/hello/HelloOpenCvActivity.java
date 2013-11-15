@@ -20,7 +20,6 @@ import org.opencv.imgproc.Imgproc;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -30,8 +29,10 @@ import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class HelloOpenCvActivity extends Activity implements
 		CvCameraViewListener2, TextToSpeech.OnInitListener {
@@ -43,6 +44,8 @@ public class HelloOpenCvActivity extends Activity implements
 	private Uri notification;
 	private Ringtone ringTone;
 	private Timer timer = new Timer();
+	private MenuItem mItemLanguage = null;
+	private boolean mIsJavaCamera = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +79,7 @@ public class HelloOpenCvActivity extends Activity implements
 	public void onDestroy() {
 		super.onDestroy();
 		shutdownCamera();
-		
-		
+				
 		if (mTts != null) {
 			mTts.stop();
 			mTts.shutdown();
@@ -86,6 +88,11 @@ public class HelloOpenCvActivity extends Activity implements
 
 	@Override
 	public void onCameraViewStarted(int width, int height) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			Log.e(Util.TAG, "Sleeping failed before starting camera view. ", e);
+		}
 		Size resolution = mOpenCvCameraView.getResolution();
 		mOpenCvCameraView.setResolution(resolution);
 		mOpenCvCameraView.setAutoFocus();
@@ -97,34 +104,34 @@ public class HelloOpenCvActivity extends Activity implements
 
 	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-		Mat mRgba = inputFrame.rgba();
-		// TODO: Shout the instructions time to time.
-		
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+		Mat mRgba = null;
 		try {
-			contours.add(DetectSquares.find(mRgba));
-			if (contours.get(0) != null) {
-				Imgproc.drawContours(mRgba, contours, -1,
-						new Scalar(0, 255, 0), 4);
-
-				if (!killed) {
-					killed = true;
-					ringTone.play();
-
-					timer = new Timer();
-					timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							ringTone.stop();
-							captureImage();
-						}
-					}, 2 * 1000);
-				}
-			} else {
-				killed = false;
-				ringTone.stop();
-				timer.cancel();
-			}
+			mRgba = inputFrame.rgba();
+			
+			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+			
+				contours.add(DetectSquares.find(mRgba));
+				if (contours.get(0) != null) {
+					Imgproc.drawContours(mRgba, contours, -1, new Scalar(0, 255, 0), 4);
+	
+					if (!killed) {
+						killed = true;
+						ringTone.play();
+	
+						timer = new Timer();
+						timer.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								ringTone.stop();
+								captureImage();
+							}
+						}, 2 * 1000);
+					}
+				} else {
+					killed = false;
+					ringTone.stop();
+					timer.cancel();
+	     		}
 		} catch (Exception exc) {
 			Log.e(Util.TAG, "Error occured" + exc.getMessage());
 		}
@@ -134,10 +141,34 @@ public class HelloOpenCvActivity extends Activity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.hello_open_cv, menu);
-		return true;
+	     mItemLanguage = menu.add("Toggle between languages");
+	     return true;
 	}
+	
+	 @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	        String toastMesage = new String();
+	        Log.i(Util.TAG, "called onOptionsItemSelected; selected item: " + item);
+
+	        if (item == mItemLanguage) {
+	            mOpenCvCameraView.setVisibility(SurfaceView.GONE);
+	            mIsJavaCamera = !mIsJavaCamera;
+
+	            if (mIsJavaCamera) {
+	                toastMesage = "Language Sinhala is selected.";
+	            } else {
+	                toastMesage = "Language English is selected.";
+	            }
+
+	            mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+	            mOpenCvCameraView.setCvCameraViewListener(this);
+	            mOpenCvCameraView.enableView();
+	            Toast toast = Toast.makeText(this, toastMesage, Toast.LENGTH_LONG);
+	            toast.show();
+	        }
+
+	        return true;
+	    }
 
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
@@ -166,8 +197,7 @@ public class HelloOpenCvActivity extends Activity implements
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 			String currentDateandTime = sdf.format(new Date());
-			String fileName = Environment.getExternalStorageDirectory()
-					.getPath() + "/project/" + currentDateandTime + ".jpg";
+			String fileName = Environment.getExternalStorageDirectory().getPath() + "/project/" + currentDateandTime;
 
 			mOpenCvCameraView.takePicture(fileName);
 		} catch (Exception exc) {
@@ -181,10 +211,9 @@ public class HelloOpenCvActivity extends Activity implements
 				// success, create the TTS instance
 				mTts = new TextToSpeech(this, this);
 			} else {
-				// missing data, install it
+				// missing TTS data, install it
 				Intent installIntent = new Intent();
-				installIntent
-						.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+				installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
 				startActivity(installIntent);
 			}
 		}
@@ -192,7 +221,8 @@ public class HelloOpenCvActivity extends Activity implements
 
 	@Override
 	public void onInit(int arg0) {
-		mTts.speak("Place your mobile on top of the document, and move it up slowly.", TextToSpeech.QUEUE_FLUSH, null);// Drop all pending entries in the playback queue.
+		// Drop all pending entries in the playback queue.
+		mTts.speak("Place your mobile on top of the document, and move it up slowly.", TextToSpeech.QUEUE_FLUSH, null);
 	}
 	
 	private void shutdownCamera() {
