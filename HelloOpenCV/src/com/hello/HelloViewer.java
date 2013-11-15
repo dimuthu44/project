@@ -1,6 +1,7 @@
 package com.hello;
 
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -74,6 +75,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
 		Log.i(Util.TAG, "Saving a bitmap to file");
+		//TODO: TTS say OCR in progress
 
 		// Write the image in a file (in jpeg format)
 		try {
@@ -105,21 +107,20 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 			// Write text to file
 			HelloOpenCvActivity.mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
 			Log.i(Util.TAG, "TEXT \n" + text);
-//			Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
-//			writeToFile(text, mPictureFileName + ".txt");
+			writeToFile(text, mPictureFileName + ".txt");
 		} 
 		catch (Exception exc) {
 			Log.e(Util.TAG, "Error occured in processing OCR", exc);
 		}
 	}
 
-	private void writeToFile(String data, String fileName) {
+	private void writeToFile(String text, String fileName) {
 	    try {
-	        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getContext().openFileOutput("111.txt", Context.MODE_PRIVATE));
-	        outputStreamWriter.write(data);
-	        outputStreamWriter.close();
+	    	FileWriter writer = new FileWriter(fileName);
+	    	writer.write(text);
+	    	writer.close();
 	    }
-	    catch (IOException e) {
+	    catch (Exception e) {
 	        Log.e(Util.TAG, "File write failed: " + e.toString());
 	    } 
 	}

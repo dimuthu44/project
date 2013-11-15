@@ -11,12 +11,12 @@
     <application
         android:allowBackup="true"
         android:debuggable="true"
-        android:label="@string/app_name" >
+        android:label="DreamVision" android:icon="@drawable/eye">
        
 
         <activity
             android:name="com.hello.HelloOpenCvActivity"
-            android:label="@string/app_name" 
+            android:label="DreamVision" 
             android:screenOrientation="landscape">
             
             <intent-filter>
