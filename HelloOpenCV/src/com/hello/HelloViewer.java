@@ -32,6 +32,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		mMaxHeight = 640; // resolution.height;
 		mMaxWidth = 480; // resolution.width;
 		connectCamera(getWidth(), getHeight());
+//		connectCamera(mMaxWidth, mMaxHeight);
 	}
 
 	public Size getResolution() {
@@ -39,10 +40,10 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 	}
 
 	public void setAutoFocus() {
-		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
-		Camera.Parameters parameters = mCamera.getParameters();
+//		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
+	/*	Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
-		mCamera.setParameters(parameters);
+		mCamera.setParameters(parameters);*/
 	}
 
 	public void takePicture(final String fileName) {

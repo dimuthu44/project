@@ -69,6 +69,8 @@ public class HelloOpenCvActivity extends Activity implements
 	@Override
 	public void onPause() {
 		super.onPause();
+		if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
 //		shutdownCamera();
 	}
 
@@ -76,7 +78,6 @@ public class HelloOpenCvActivity extends Activity implements
 	public void onDestroy() {
 		super.onDestroy();
 		shutdownCamera();
-		
 		
 		if (mTts != null) {
 			mTts.stop();
@@ -100,34 +101,33 @@ public class HelloOpenCvActivity extends Activity implements
 		Mat mRgba = inputFrame.rgba();
 		// TODO: Shout the instructions time to time.
 		
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		try {
-			contours.add(DetectSquares.find(mRgba));
-			if (contours.get(0) != null) {
-				Imgproc.drawContours(mRgba, contours, -1,
-						new Scalar(0, 255, 0), 4);
-
-				if (!killed) {
-					killed = true;
-					ringTone.play();
-
-					timer = new Timer();
-					timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							ringTone.stop();
-							captureImage();
-						}
-					}, 2 * 1000);
-				}
-			} else {
-				killed = false;
-				ringTone.stop();
-				timer.cancel();
-			}
-		} catch (Exception exc) {
-			Log.e(Util.TAG, "Error occured" + exc.getMessage());
-		}
+//		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//		try {
+//			contours.add(DetectSquares.find(mRgba));
+//			if (contours.get(0) != null) {
+//				Imgproc.drawContours(mRgba, contours, -1, new Scalar(0, 255, 0), 4);
+//
+//				if (!killed) {
+//					killed = true;
+//					ringTone.play();
+//
+//					timer = new Timer();
+//					timer.schedule(new TimerTask() {
+//						@Override
+//						public void run() {
+//							ringTone.stop();
+//							captureImage();
+//						}
+//					}, 2 * 1000);
+//				}
+//			} else {
+//				killed = false;
+//				ringTone.stop();
+//				timer.cancel();
+//			}
+//		} catch (Exception exc) {
+//			Log.e(Util.TAG, "Error occured" + exc.getMessage());
+//		}
 
 		return mRgba;
 	}
@@ -139,26 +139,27 @@ public class HelloOpenCvActivity extends Activity implements
 		return true;
 	}
 
-	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-		@Override
-		public void onManagerConnected(int status) {
-			switch (status) {
-			case LoaderCallbackInterface.SUCCESS: 
-				Log.i(Util.TAG, "OpenCV loaded successfully");
-				mOpenCvCameraView.enableView();
-				break;
-			default: 
-				super.onManagerConnected(status);
-				break;
-			}
-		}
-	};
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(Util.TAG, "OpenCV loaded successfully");
+                    mOpenCvCameraView.enableView();
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this,
-				mLoaderCallback);
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -166,8 +167,7 @@ public class HelloOpenCvActivity extends Activity implements
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 			String currentDateandTime = sdf.format(new Date());
-			String fileName = Environment.getExternalStorageDirectory()
-					.getPath() + "/project/" + currentDateandTime + ".jpg";
+			String fileName = Environment.getExternalStorageDirectory().getPath() + "/project/" + currentDateandTime + ".jpg";
 
 			mOpenCvCameraView.takePicture(fileName);
 		} catch (Exception exc) {
