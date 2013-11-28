@@ -79,9 +79,7 @@ public class DetectSquares {
 
                         if (maxCosine < 0.3) {
                             maxArea = area;
-                            //Log.i("DIMUTHU::", "Contour area is " + maxArea);
                             contourIdx = contours.indexOf(contour);
-                            //contours.set(maxId, getHull(contour));
                         }
                     }
                 }

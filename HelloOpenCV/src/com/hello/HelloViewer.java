@@ -3,6 +3,8 @@ package com.hello;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+
 import org.opencv.android.JavaCameraView;
 
 import android.content.Context;
@@ -26,12 +28,21 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 
 	public void setResolution(Size resolution) {
 		disconnectCamera();
-		mMaxHeight = 640; // resolution.height;
-		mMaxWidth = 480; // resolution.width;
-		connectCamera(getWidth(), getHeight());
+		
+		mMaxHeight = 480; // resolution.width;
+		mMaxWidth = 640; // resolution.height;
+//		connectCamera(getWidth(), getHeight());
+		// Sets the preview size of camera.
+		
+		connectCamera(mMaxWidth, mMaxHeight);
 	}
 
 	public Size getResolution() {
+		List<Camera.Size> sizes  = mCamera.getParameters().getSupportedPictureSizes();
+		for (Camera.Size size : sizes) {
+			Log.i(Util.TAG, "Picture sizes height : " + size.height + ", width : " + size.width);
+		}
+		
 		return mCamera.getParameters().getPreviewSize();
 	}
 
@@ -39,6 +50,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
+		parameters.setPictureSize(2592, 1944);
 		mCamera.setParameters(parameters);
 	}
 
