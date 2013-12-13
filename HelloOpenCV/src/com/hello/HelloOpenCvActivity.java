@@ -46,6 +46,7 @@ public class HelloOpenCvActivity extends Activity implements
 	private Timer timer = new Timer();
 	private MenuItem mItemLanguage = null;
 	private boolean mIsJavaCamera = true;
+	public static String lang = "eng";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,7 @@ public class HelloOpenCvActivity extends Activity implements
 								ringTone.stop();
 								captureImage();
 							}
-						}, 2 * 1000);
+						}, 4 * 1000);
 					}
 				} else {
 					killed = false;
@@ -155,9 +156,12 @@ public class HelloOpenCvActivity extends Activity implements
 	            mIsJavaCamera = !mIsJavaCamera;
 
 	            if (mIsJavaCamera) {
+	            	//TODO: Shout this.
 	                toastMesage = "Language Sinhala is selected.";
+	                lang = "sin";
 	            } else {
 	                toastMesage = "Language English is selected.";
+	                lang = "eng";
 	            }
 
 	            mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);

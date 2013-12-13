@@ -50,6 +50,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
+		//TODO: Enable in nexus 3
 		parameters.setPictureSize(2592, 1944);
 		mCamera.setParameters(parameters);
 	}

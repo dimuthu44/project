@@ -11,7 +11,7 @@ public class OCRProcessor {
 		TessBaseAPI baseApi = new TessBaseAPI();
 		
 		String DATA_PATH = Environment.getExternalStorageDirectory().getPath() + "/project";
-		String lang = "eng";
+		String lang = HelloOpenCvActivity.lang;
 		baseApi.init(DATA_PATH, lang);
 		baseApi.setImage(bitmap);
 		String recognizedText = baseApi.getUTF8Text();
