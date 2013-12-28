@@ -34,7 +34,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 //		connectCamera(getWidth(), getHeight());
 		// Sets the preview size of camera.
 		
-		connectCamera(mMaxWidth, mMaxHeight);
+		connectCamera(getWidth(),getHeight());
 	}
 
 	public Size getResolution() {
@@ -51,7 +51,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
 		//TODO: Enable in nexus 3
-		parameters.setPictureSize(2592, 1944);
+//		parameters.setPictureSize(2592, 1944);
 		mCamera.setParameters(parameters);
 	}
 
