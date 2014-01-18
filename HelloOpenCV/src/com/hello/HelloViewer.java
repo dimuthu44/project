@@ -21,6 +21,7 @@ import android.util.Log;
 public class HelloViewer extends JavaCameraView implements PictureCallback, ShutterCallback {
 
 	private String mPictureFileName;
+	private TextToSpeech mTts;
 
 	public HelloViewer(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -50,7 +51,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		Log.i(Util.TAG, "Seting autofocus mode to Continuous picture.");
 		Camera.Parameters parameters = mCamera.getParameters();
 		parameters.setFocusMode("continuous-picture");
-		//TODO: Enable in nexus 3
+		// Enable in nexus 3
 //		parameters.setPictureSize(2592, 1944);
 		mCamera.setParameters(parameters);
 	}
@@ -59,32 +60,15 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		Log.i(Util.TAG, "Taking picture");
 
 		this.mPictureFileName = fileName;
-		// Postview and jpeg are sent in the same buffers if the queue is not
-		// empty when performing a capture.
-		// Clear up buffers to avoid mCamera.takePicture to be stuck because of
-		// a memory issue
-
-//		mCamera.setPreviewCallback(null);
-		// mCamera.autoFocus(autoFocusCallback);
-
 		// PictureCallback is implemented by the current class
 		mCamera.takePicture(this, null, null, this);
-		//TODO: We need to stop processing afterwards.
-//		mCamera.stopPreview();
 	}
-//
-//	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
-//		@Override
-//		public void onAutoFocus(boolean success, Camera camera) {
-//			Log.i(Util.TAG, "autofocus callback called.");
-//		}
-//	};
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
 		Log.i(Util.TAG, "Saving a bitmap to file");
-		//TODO: TTS say OCR in progress
-
+		HelloOpenCvActivity.mTts.speak("Please wait, Character recognition process is in progress.", TextToSpeech.QUEUE_ADD, null);
+		
 		// Write the image in a file (in jpeg format)
 		try {
 			FileOutputStream fos = new FileOutputStream(mPictureFileName + ".jpg");
@@ -119,6 +103,7 @@ public class HelloViewer extends JavaCameraView implements PictureCallback, Shut
 		} 
 		catch (Exception exc) {
 			Log.e(Util.TAG, "Error occured in processing OCR", exc);
+			HelloOpenCvActivity.mTts.speak("Error occurred in processing document, Please refetch the document", TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
 

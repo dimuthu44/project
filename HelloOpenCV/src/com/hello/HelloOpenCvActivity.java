@@ -156,12 +156,15 @@ public class HelloOpenCvActivity extends Activity implements
 	            mIsJavaCamera = !mIsJavaCamera;
 
 	            if (mIsJavaCamera) {
-	            	//TODO: Shout this.
-	                toastMesage = "Language Sinhala is selected.";
-	                lang = "sin";
-	            } else {
-	                toastMesage = "Language English is selected.";
+	            	String english = "Language English is selected";
+	                toastMesage = english;
 	                lang = "eng";
+	                mTts.speak(english, TextToSpeech.QUEUE_ADD, null);
+	            } else {
+	            	String sinhala = "Language Sinhala is selected";
+	                toastMesage = sinhala;
+	                lang = "sin";
+	                mTts.speak(sinhala, TextToSpeech.QUEUE_ADD, null);
 	            }
 
 	            mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
